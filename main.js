@@ -12,7 +12,7 @@ function sendAPIRequest() {
         body: JSON.stringify({ 'api_request': apiRequest })
     };
     console.log(requestOptions);
-    fetch('http://3.110.102.209/getInformation', requestOptions)
+    fetch('http://13.232.235.9/getInformation', requestOptions)
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
