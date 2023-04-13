@@ -122,6 +122,7 @@ docs/_build/
 target/
 
 # Jupyter Notebook
+*.ipynb
 
 # IPython
 
