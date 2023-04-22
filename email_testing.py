@@ -8,6 +8,8 @@ import dkim
 from dotenv import load_dotenv
 load_dotenv()
 
+URL="http://127.0.0.1:8000/"
+
 # Helper function to send a verification email
 def send_verification_email(email, token):
     sender = "info@codeme.site"
@@ -18,7 +20,7 @@ def send_verification_email(email, token):
     body_html = f"""
     <html>
         <body>
-            <p>Please click on <a href="http://127.0.0.1:8000/verify/{token}">this link</a> to verify your account.</p>
+            <p>Please click on <a href="{URL}verify/{token}">this link</a> to verify your account.</p>
         </body>
     </html>
     """
