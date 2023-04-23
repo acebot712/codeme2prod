@@ -1,5 +1,5 @@
 from email_testing import send_verification_email
-from fastapi import FastAPI, Request, Form, BackgroundTasks
+from fastapi import FastAPI, Request, Form, BackgroundTasks, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import EmailStr
@@ -9,11 +9,12 @@ import uuid
 import os
 
 STATIC_DIR="static"
-LOGIN_ERROR=os.path.join(STATIC_DIR,"login_error.html")
 DASHBOARD=os.path.join(STATIC_DIR,"dashboard.html")
 INDEX=os.path.join(STATIC_DIR,"index.html")
 LOGIN=os.path.join(STATIC_DIR,"login.html")
+LOGIN_ERROR=os.path.join(STATIC_DIR,"login_error.html")
 REGISTER=os.path.join(STATIC_DIR,"register.html")
+REGISTER_ERROR=os.path.join(STATIC_DIR,"register_error.html")
 WELCOME=os.path.join(STATIC_DIR, "welcome.html")
 
 def get_html_from_file(filename):
@@ -24,6 +25,15 @@ def get_html_from_file(filename):
 # Helper function to generate a unique session token
 def generate_session_token():
     return str(uuid.uuid4())
+
+def delete_session_token(request, session_token):
+    session_token = request.cookies.get(session_token)
+    if session_token:
+        conn = sqlite3.connect(os.environ.get("DB_NAME"))
+        with conn:
+            cursor = conn.cursor()
+            cursor.execute("UPDATE users SET session_token = NULL where session_token = ?", (session_token,))
+            conn.commit()
 
 app=FastAPI()
 
@@ -42,6 +52,7 @@ def index(request: Request):
 
     # check for session token in cookie
     session_token=request.cookies.get("session_token")
+    print(session_token)
     if not session_token:
         # if session token is not present, redirect to login
         return RedirectResponse(url="/login")
@@ -62,18 +73,12 @@ def index(request: Request):
     return HTMLResponse(get_html_from_file(DASHBOARD))
 
 @app.get("/login")
-def index(request: Request):
-    session_token = request.cookies.get('session_token')
-    if session_token:
-        conn = sqlite3.connect(os.environ.get("DB_NAME"))
-        with conn:
-            cursor = conn.cursor()
-            cursor.execute("DELETE FROM users WHERE session_token=?", (session_token,))
-            cursor.commit()
+def login_get(request: Request):
+    delete_session_token(request, "session_token")
     return HTMLResponse(get_html_from_file(LOGIN))
 
 @app.post("/login")
-async def login(request: Request, email: str = Form(...), password: str = Form(...)):
+async def login_post(request: Request, email: str = Form(...), password: str = Form(...)):
     # connect to the SQLite database
     conn=sqlite3.connect(os.environ.get("DB_NAME"))
     with conn:
@@ -83,6 +88,7 @@ async def login(request: Request, email: str = Form(...), password: str = Form(.
         # check if the email and password are valid
         cursor.execute("SELECT * FROM users WHERE email=? AND password=?", (email, password))
         user=cursor.fetchone()
+        print(user)
         if user:
             if user["verified"]:
                 # generate a session token and store it in the database
@@ -91,7 +97,7 @@ async def login(request: Request, email: str = Form(...), password: str = Form(.
                 conn.commit()
 
                 # set cookie and redirect to dashboard
-                response=RedirectResponse(url="/")
+                response=RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
                 response.set_cookie(key="session_token", value=session_token)
             else:
                 response=HTMLResponse(get_html_from_file(LOGIN_ERROR))
@@ -101,11 +107,11 @@ async def login(request: Request, email: str = Form(...), password: str = Form(.
     return response
 
 @app.get("/register", response_class=HTMLResponse)
-def register_page():
+def register_get():
     return get_html_from_file(REGISTER)
 
 @app.post("/register")
-async def register(request: Request, background_tasks: BackgroundTasks, email: EmailStr = Form(...), password: str = Form(...)):
+async def register_post(request: Request, background_tasks: BackgroundTasks, email: EmailStr = Form(...), password: str = Form(...)):
     # check if the email is already registered
     conn=sqlite3.connect(os.environ.get("DB_NAME"))
     with conn:
@@ -115,7 +121,8 @@ async def register(request: Request, background_tasks: BackgroundTasks, email: E
 
         if user:
             # if the email is already registered, return an error message
-            return HTMLResponse(get_html_from_file(REGISTER))
+            print("HERE L:")
+            return HTMLResponse(get_html_from_file(REGISTER_ERROR))
         
         token=generate_session_token()
 
@@ -128,12 +135,14 @@ async def register(request: Request, background_tasks: BackgroundTasks, email: E
         background_tasks.add_task(send_verification_email, email, token)
 
     # redirect the user to the welcome page
+    delete_session_token(request,"session_token")
     return HTMLResponse(get_html_from_file(WELCOME))
 
 @app.get("/verify/{token}")
 async def verify(request: Request, token: str):
     # retrieve the user from the database using the session token
     conn=sqlite3.connect(os.environ.get("DB_NAME"))
+    conn.row_factory=sqlite3.Row
     with conn:
         cursor=conn.cursor()
         cursor.execute("SELECT * FROM users WHERE verification_token=?", (token,))
@@ -148,4 +157,10 @@ async def verify(request: Request, token: str):
         conn.commit()
 
     # redirect the user to the login page
+    delete_session_token(request,"session_token")
+    return RedirectResponse(url="/login")
+
+@app.get("/logout")
+async def logout(request: Request):
+    delete_session_token(request,"session_token")
     return RedirectResponse(url="/login")
