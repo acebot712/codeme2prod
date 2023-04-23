@@ -26,7 +26,7 @@ def send_verification_email(email, token):
     """
     
     message = MIMEMultipart('alternative')
-    message['From'] = sender
+    message['From'] = f"CodeMe <{sender}>"
     message['To'] = recipient
     message['Subject'] = subject
     message['Date'] = utils.formatdate(localtime = 1)

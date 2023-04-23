@@ -52,7 +52,6 @@ def index(request: Request):
 
     # check for session token in cookie
     session_token=request.cookies.get("session_token")
-    print(session_token)
     if not session_token:
         # if session token is not present, redirect to login
         return RedirectResponse(url="/login")
@@ -88,7 +87,6 @@ async def login_post(request: Request, email: str = Form(...), password: str = F
         # check if the email and password are valid
         cursor.execute("SELECT * FROM users WHERE email=? AND password=?", (email, password))
         user=cursor.fetchone()
-        print(user)
         if user:
             if user["verified"]:
                 # generate a session token and store it in the database
@@ -121,7 +119,6 @@ async def register_post(request: Request, background_tasks: BackgroundTasks, ema
 
         if user:
             # if the email is already registered, return an error message
-            print("HERE L:")
             return HTMLResponse(get_html_from_file(REGISTER_ERROR))
         
         token=generate_session_token()
