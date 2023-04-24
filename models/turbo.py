@@ -1,5 +1,5 @@
-from model import Model
-from prompt import Prompt
+from .model import Model
+from .prompt import Prompt
 import requests
 import os
 from dotenv import load_dotenv
@@ -46,7 +46,7 @@ if __name__ == "__main__":
         im_start_token=IM_START_TOKEN,
         im_end_token="<|im_end|>",
         run_prompt_engine=True,
-    )
+    ).get_text()
     print(prompt)
     model = AzureChatGPTAPI(
         api_key=os.environ.get("FK_API_KEY", ""),

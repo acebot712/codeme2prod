@@ -1,8 +1,116 @@
+<!DOCTYPE html>
 <html>
 
+<head>
+    <title>My Website</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.25.0/themes/prism-okaidia.min.css" />
+    <style>
+        body {
+            background-color: #f8f8f8;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .form-wrapper {
+            display: flex;
+            justify-content: space-between;
+            flex-direction: column;
+        }
+
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: none;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+
 <body>
-    <h1>Welcome to the dashboard!</h1>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <h1>CodeMe</h1>
+                <form>
+                    <div class="form-wrapper">
+                        <div class="form-group">
+                            <label for="api-request">AI Powered Coding assistant</label>
+                            <input type="text" class="form-control" id="api-request" name="api-request">
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="sendAPIRequest()">Send</button>
+                    </div>
+
+                </form>
+                <div>
+                    <p>Answer: </p>
+                    <pre><code class="language-py" id="response-div">print("hello")
+      </code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
     <a href="/logout">Logout</a>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.25.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-python.min.js"></script>
+    <script>
+        function sendAPIRequest() {
+            const apiRequest = document.getElementById("api-request").value;
+            const responseDiv = document.getElementById("response-div");
+            responseDiv.innerHTML = 'Thinking of the best solution to your prompt... \
+    <br>Sip some &#9749; and wait for magic';
+
+            const requestOptions = {
+                method: 'POST',
+                cache: "no-cache",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Cookie': document.cookie
+                },
+                body: JSON.stringify({ 'prompt': apiRequest })
+            };
+            console.log(requestOptions);
+            fetch('http://127.0.0.1:8000/getInformation', requestOptions)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+
+                    responseDiv.innerHTML = data.code;
+                    Prism.highlightAll();
+                    console.log(data);
+                })
+                .catch(error => console.error(error));
+
+        }
+    </script>
+    <script>
+        Prism.highlightAll();
+    </script>
 </body>
 
 </html>

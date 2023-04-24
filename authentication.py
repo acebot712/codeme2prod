@@ -2,11 +2,15 @@ from email_testing import send_verification_email
 from fastapi import FastAPI, Request, Form, BackgroundTasks, status
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
+from models.completion import Completion
+from models.turbo import AzureChatGPTAPI
+from models.prompt import Prompt
 from pydantic import EmailStr
 import secrets
 import sqlite3
 import uuid
 import os
+import re
 
 STATIC_DIR = "static"
 DASHBOARD = os.path.join(STATIC_DIR, "dashboard.html")
@@ -16,6 +20,12 @@ LOGIN_ERROR = os.path.join(STATIC_DIR, "login_error.html")
 REGISTER = os.path.join(STATIC_DIR, "register.html")
 REGISTER_ERROR = os.path.join(STATIC_DIR, "register_error.html")
 WELCOME = os.path.join(STATIC_DIR, "welcome.html")
+
+def code_only(response):
+    code_pattern = re.compile(r'```.*?```', re.DOTALL)
+    code_blocks = re.findall(code_pattern, response)
+    for block in code_blocks:
+        return block.strip('`')
 
 
 def get_html_from_file(filename):
@@ -54,30 +64,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-@app.get("/")
-def index(request: Request):
-    # check for session token in cookie
+def get_current_user(request):
     session_token = request.cookies.get("session_token")
     if not session_token:
-        # if session token is not present, redirect to login
-        return RedirectResponse(url="/login")
-
+        return None
     # retrieve user's authentication status using the session token
     conn = sqlite3.connect(os.environ.get("DB_NAME"))
     with conn:
         cursor = conn.cursor()
-
         # execute the SQL query to retrieve the user's authentication status
         cursor.execute("SELECT * FROM users WHERE session_token = ?", (session_token,))
         user = cursor.fetchone()
         if not user:
-            # if the session token is invalid, redirect to login
-            return RedirectResponse(url="/login")
+            return None
+        return user
 
+@app.get("/")
+def index(request: Request):
+    user = get_current_user(request)
+    if not user:
+        return RedirectResponse(url="/login")
     # user is authenticated, return the dashboard page
     return HTMLResponse(get_html_from_file(DASHBOARD))
-
 
 @app.get("/login")
 def login_get(request: Request):
@@ -190,3 +198,34 @@ async def verify(request: Request, token: str):
 async def logout(request: Request):
     delete_session_token(request, "session_token")
     return RedirectResponse(url="/login")
+
+@app.post("/getInformation")
+async def get_information(req : Request):
+    IM_START_TOKEN = "<|im_start|>"
+    IM_END_TOKEN = "<|im_end|>"
+    req_body = await req.json()
+    prompt = Prompt(
+        text=req_body["prompt"],
+        im_start_token=IM_START_TOKEN,
+        im_end_token=IM_END_TOKEN,
+        run_prompt_engine=True,
+    ).get_text()
+    print(prompt)
+
+    session_cookie = req.cookies.get("new_cookie")  # Get the value of the session_cookie cookie
+    
+    print("session_cookie =", session_cookie)
+
+    model = AzureChatGPTAPI(
+        api_key=os.environ.get("FK_API_KEY", ""),
+        endpoint=os.environ.get("FK_ENDPOINT", ""),
+        im_start_token=IM_START_TOKEN,
+        im_end_token=IM_END_TOKEN,
+    )
+    code_data = model.generate_code(prompt)
+    print(code_data)
+
+    return {
+        "status" : "SUCCESS",
+        "code" : code_data
+    }
