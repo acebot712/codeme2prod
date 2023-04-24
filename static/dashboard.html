@@ -32,6 +32,19 @@
             font-size: 16px;
         }
 
+        textarea {
+            border: 1px solid #ccc;
+            font-family: inherit;
+            padding: 0.5em;
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            resize: both;
+            max-height: 10em;
+            overflow-y: auto;
+            line-height: 1em;
+        }
+
         button {
             background-color: #007bff;
             border: none;
@@ -57,7 +70,8 @@
                     <div class="form-wrapper">
                         <div class="form-group">
                             <label for="api-request">AI Powered Coding assistant</label>
-                            <input type="text" class="form-control" id="api-request" name="api-request">
+                            <textarea class="form-control textarea resize-ta" id="api-request" name="api-request" style="height: 
+                                2em;"></textarea>
                         </div>
                         <button type="button" class="btn btn-primary" onclick="sendAPIRequest()">Send</button>
                     </div>
@@ -74,6 +88,20 @@
     <a href="/logout">Logout</a>
     <script src="https://cdn.jsdelivr.net/npm/prismjs@1.25.0/prism.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-python.min.js"></script>
+    <script>
+        // Dealing with Textarea Height
+        function calcHeight(value) {
+            let numberOfLineBreaks = (value.match(/\n/g) || []).length;
+            // min-height + lines x line-height + padding + border
+            let newHeight = 20 + numberOfLineBreaks * 20 + 12 + 2;
+            return newHeight;
+        }
+
+        let textarea = document.querySelector(".resize-ta");
+        textarea.addEventListener("keyup", () => {
+            textarea.style.height = calcHeight(textarea.value) + "px";
+        });
+    </script>
     <script>
         function sendAPIRequest() {
             const apiRequest = document.getElementById("api-request").value;
