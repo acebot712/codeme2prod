@@ -21,57 +21,49 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/getInformation")
-async def get_information(req : Request):
-    IM_START_TOKEN = "<|im_start|>"
-    IM_END_TOKEN = "<|im_end|>"
+@app.post("/getcode/{model}")
+async def get_information(req: Request, model: str):
     req_body = await req.json()
-    prompt = Prompt(
-        text=req_body["prompt"],
-        im_start_token=IM_START_TOKEN,
-        im_end_token=IM_END_TOKEN,
-        run_prompt_engine=True,
-    ).get_text()
-    print(prompt)
-
-    session_cookie = req.cookies.get("new_cookie")  # Get the value of the session_cookie cookie
-    
-    print("session_cookie =", session_cookie)
-
-    model = AzureChatGPTAPI(
-        api_key=os.environ.get("FK_API_KEY", ""),
-        endpoint=os.environ.get("FK_ENDPOINT", ""),
-        im_start_token=IM_START_TOKEN,
-        im_end_token=IM_END_TOKEN,
-    )
-    code_data = model.generate_code(prompt)
-    print(code_data)
-
-    return {
-        "status" : "SUCCESS",
-        "code" : code_data
-    }
-
-@app.post("/getInformations")
-async def get_informations(req : Request):
-    req_body = await req.json()
-
     session_cookie = req.headers.get("Cookie")
     if session_cookie:
         session_cookie = session_cookie.split("; ")[0].split("=")[1]
     print("session_cookie =", session_cookie)
 
-    model = Completion(api_key=os.environ.get('API_KEY'))
-    prompt = Prompt(
-        text=req_body["prompt"],
-    ).get_text()
-    print(prompt)
+    if model == "turbo":
+        IM_START_TOKEN = "<|im_start|>"
+        IM_END_TOKEN = "<|im_end|>"
+        prompt = Prompt(
+            text=req_body["prompt"],
+            im_start_token=IM_START_TOKEN,
+            im_end_token=IM_END_TOKEN,
+            run_prompt_engine=True,
+        ).get_text()
+        model = AzureChatGPTAPI(
+            api_key=os.environ.get("FK_API_KEY", ""),
+            endpoint=os.environ.get("FK_ENDPOINT", ""),
+            im_start_token=IM_START_TOKEN,
+            im_end_token=IM_END_TOKEN,
+        )
+        
+    elif model == "completions":
+
+        model = Completion(api_key=os.environ.get('API_KEY'))
+        prompt = Prompt(
+            text=req_body["prompt"],
+        ).get_text()
+
+    else:
+        return {
+            "status" : "FAILURE",
+            "code" : "Model not found"
+        }
+    
     code_data = model.generate_code(prompt)
     return {
         "status" : "SUCCESS",
         "code" : code_data
     }
 """
-curl -X POST -H "Content-Type: application/json" -d '{"prompt": "Write a function for dfs"}' -b "session_cookie=cookie_monster" http://localhost:8000/getInformation
+curl -X POST -H "Content-Type: application/json" -d '{"prompt": "Write a function for dfs"}' -b "session_cookie=cookie_monster" http://localhost:8000/getcode/turbo
 
 """

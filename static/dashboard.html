@@ -80,18 +80,19 @@
             const responseDiv = document.getElementById("response-div");
             responseDiv.innerHTML = 'Thinking of the best solution to your prompt... \
     <br>Sip some &#9749; and wait for magic';
-
+            const session_token = document.cookie.replace(/(?:(?:^|.*;\s*)session_token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
             const requestOptions = {
                 method: 'POST',
                 cache: "no-cache",
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Cookie': document.cookie
+                    'Cookie': `session_token=${session_token}`
                 },
                 body: JSON.stringify({ 'prompt': apiRequest })
             };
             console.log(requestOptions);
-            fetch('http://127.0.0.1:8000/getInformation', requestOptions)
+            fetch('http://127.0.0.1:8000/getcode/turbo', requestOptions)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
