@@ -3,9 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from models.completion import Completion
 from models.turbo import AzureChatGPTAPI
 from models.prompt import Prompt
-import re
 import os
 from dotenv import load_dotenv
+import pandas as pd
+import datetime
 
 load_dotenv()
 
@@ -59,11 +60,28 @@ async def get_information(req: Request, model: str):
         }
     
     code_data = model.generate_code(prompt)
-    return {
+    response = {
         "status" : "SUCCESS",
         "code" : code_data
     }
-"""
-curl -X POST -H "Content-Type: application/json" -d '{"prompt": "Write a function for dfs"}' -b "session_cookie=cookie_monster" http://localhost:8000/getcode/turbo
+    # Assuming you have two lists of equal length containing request and response data respectively
+    request_data = [req_body["prompt"]]
+    response_data = [response]
 
-"""
+    # Create a DataFrame from the two lists
+    data = {'Request': request_data, 'Response': response_data}
+    df = pd.DataFrame(data)
+
+    current_date = datetime.date.today()
+    date_string = current_date.strftime("%Y-%m-%d") + "_server_logs.csv"
+
+    # Check if output.csv exists, if not create a new file
+    if not os.path.exists(date_string):
+        df.to_csv(date_string, index=False)
+    else:
+        # Append to existing csv file
+        df.to_csv(date_string, mode='a', header=False, index=False)
+    return response
+    """
+    curl -X POST -H "Content-Type: application/json" -d '{"prompt": "Write a function for dfs"}' -b "session_cookie=cookie_monster" http://localhost:8000/getcode/turbo
+    """
