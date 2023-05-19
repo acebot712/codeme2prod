@@ -76,7 +76,7 @@ async def get_information(req: Request, model: str):
     date_string = "~/" + current_date.strftime("%Y-%m-%d") + "_server_logs.csv"
 
     # Check if output.csv exists, if not create a new file
-    if not os.path.exists(date_string):
+    if not os.path.exists(os.path.expanduser(date_string)):
         df.to_csv(date_string, index=False)
     else:
         # Append to existing csv file
