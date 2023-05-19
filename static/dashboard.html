@@ -103,6 +103,11 @@
         });
     </script>
     <script>
+        require('dotenv').config();
+
+        const externalIP = process.env.EXTERNAL_IP;
+        const url = `http://${externalIP}:8000/getcode/turbo`;
+
         function sendAPIRequest() {
             const apiRequest = document.getElementById("api-request").value;
             const responseDiv = document.getElementById("response-div");
@@ -120,7 +125,7 @@
                 body: JSON.stringify({ 'prompt': apiRequest })
             };
             console.log(requestOptions);
-            fetch('http://127.0.0.1:8000/getcode/turbo', requestOptions)
+            fetch(url, requestOptions)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
