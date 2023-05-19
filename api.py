@@ -73,7 +73,7 @@ async def get_information(req: Request, model: str):
     df = pd.DataFrame(data)
 
     current_date = datetime.date.today()
-    date_string = current_date.strftime("%Y-%m-%d") + "_server_logs.csv"
+    date_string = "~/" + current_date.strftime("%Y-%m-%d") + "_server_logs.csv"
 
     # Check if output.csv exists, if not create a new file
     if not os.path.exists(date_string):
