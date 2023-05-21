@@ -64,12 +64,10 @@ async def get_information(req: Request, model: str):
         "status" : "SUCCESS",
         "code" : code_data
     }
-    # Assuming you have two lists of equal length containing request and response data respectively
-    request_data = [req_body["prompt"]]
-    response_data = [response]
 
     # Create a DataFrame from the two lists
-    data = {'Request': request_data, 'Response': response_data}
+    data = req_body
+    data["Response"] = response
     df = pd.DataFrame(data)
 
     current_date = datetime.date.today()
