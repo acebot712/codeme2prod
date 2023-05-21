@@ -67,7 +67,7 @@ async def get_information(req: Request, model: str):
 
     # Create a DataFrame from the two lists
     data = req_body
-    data["Response"] = code_data
+    data["Response"] = [code_data]
     df = pd.DataFrame(data)
 
     current_date = datetime.date.today()
