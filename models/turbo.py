@@ -31,7 +31,7 @@ class AzureChatGPTAPI(Model):
             "presence_penalty": self.presence_penalty,
             "top_p": self.top_p,
             "logit_bias": self.logit_bias,
-            "stop": ["<|im_end|>", "```"],
+            "stop": ["<|im_end|>"],
         }
 
         response = requests.post(url, headers=headers, json=data)
