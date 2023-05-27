@@ -65,7 +65,12 @@ class Prompt:
             },
             {
                 "role": "system",
-                "content": "If you have nothing to say, then say 'I don't know the answer to your question.'",
+                "content": "If you are asked to generate testcases code then use a unit test library and give a code implemention of unit test cases for the question",
+            },
+            
+            {
+                "role": "system",
+                "content": "Never give an empty response. If you have nothing to say, then say 'I don't know the answer to your question.'",
             },
         ]
         prompt_list.append({"role": "user", "content": prompt})
