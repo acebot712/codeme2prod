@@ -61,6 +61,10 @@ class Prompt:
             },
             {
                 "role": "system",
+                "content": "If you are asked to debug code then think carefully and describe what is wrong with the code in question.",
+            },
+            {
+                "role": "system",
                 "content": "If you have nothing to say, then say 'I don't know the answer to your question.'",
             },
         ]
