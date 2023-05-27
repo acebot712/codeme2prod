@@ -41,7 +41,7 @@ class Prompt:
             },
             {
                 "role": "system",
-                "content": "First think step-by-step - describe your plan for what to build in pseudocode, written out in great detail.",
+                "content": "First think step-by-step - describe your plan for what to build in pseudocode, written out in great detail after giving the code implementation",
             },
             {
                 "role": "system",
@@ -65,7 +65,7 @@ class Prompt:
             },
             {
                 "role": "system",
-                "content": "Use markdown formatting in your answers but don't use markdown headings with hashtags",
+                "content": "Use markdown formatting in your answers but don't use any headings in the markdown output.",
             },
         ]
         prompt_list.append({"role": "user", "content": prompt})
