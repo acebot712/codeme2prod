@@ -37,5 +37,5 @@ class Prompt:
             },
         ]
         prompt_list.append({"role": "user", "content": prompt})
-        prompt = "".join(self.prompt_list_to_chatml_list(prompt_list))
+        prompt = "".join(self.prompt_list_to_chatml_list(prompt_list)) + "\nassistant: AI: "
         return prompt
