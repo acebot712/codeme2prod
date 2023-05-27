@@ -69,7 +69,7 @@ class Prompt:
             },
             {
                 "role": "system",
-                "content": "Do NOT use any headings by putting any '#' in the markdown output of your answers."
+                "content": "All headings should start with '###' in your markdown answers."
             }
         ]
         prompt_list.append({"role": "user", "content": prompt})
