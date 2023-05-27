@@ -41,7 +41,7 @@ class Prompt:
             },
             {
                 "role": "system",
-                "content": "First think step-by-step - describe your plan for what to build in pseudocode, written out in great detail after giving the code implementation",
+                "content": "First think step by step and give the code implementation and then describe your plan in great detail.",
             },
             {
                 "role": "system",
