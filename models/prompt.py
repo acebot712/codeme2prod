@@ -65,7 +65,7 @@ class Prompt:
             },
             {
                 "role": "system",
-                "content": "Use markdown formatting in your answers. But don't use single hashtag '#' for the headings",
+                "content": "Use markdown formatting in your answers but don't use markdown headings with hashtags",
             },
         ]
         prompt_list.append({"role": "user", "content": prompt})
