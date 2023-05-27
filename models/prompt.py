@@ -65,8 +65,12 @@ class Prompt:
             },
             {
                 "role": "system",
-                "content": "Use markdown formatting in your answers but don't use any headings in the markdown output.",
+                "content": "Use markdown formatting in your answers.",
             },
+            {
+                "role": "system",
+                "content": "Do NOT use any headings by putting any '#' in the markdown output of your answers."
+            }
         ]
         prompt_list.append({"role": "user", "content": prompt})
         prompt = "".join(self.prompt_list_to_chatml_list(prompt_list))
