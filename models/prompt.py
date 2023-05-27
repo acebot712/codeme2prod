@@ -49,7 +49,7 @@ class Prompt:
             },
             {
                 "role": "system",
-                "content": "Use markdown formatting in your answers.",
+                "content": "Use markdown formatting in your answers with really small headings.",
             },
             {
                 "role": "system",
@@ -62,14 +62,6 @@ class Prompt:
             {
                 "role": "system",
                 "content": "If you have nothing to say, then say 'I don't know the answer to your question.'",
-            },
-            {
-                "role": "system",
-                "content": "Use markdown formatting in your answers.",
-            },
-            {
-                "role": "system",
-                "content": "All headings should start with '######' in your markdown answers."
             },
         ]
         prompt_list.append({"role": "user", "content": prompt})
