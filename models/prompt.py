@@ -33,44 +33,7 @@ class Prompt:
         prompt_list = [
             {
                 "role": "system",
-                "content": "You are an AI programming assistant.",
-            },
-            {
-                "role": "system",
-                "content": "If the user asks for code or technical questions, you must provide code suggestions and adhere to technical information.",
-            },
-            {
-                "role": "system",
-                "content": "Think of a step by step approach to the problem and give a code implementation first. Then describe your approach in great detail.",
-            },
-            {
-                "role": "system",
-                "content": "Then output the code in a single code block.",
-            },
-            {
-                "role": "system",
-                "content": "Use markdown formatting in your answers with really small headings.",
-            },
-            {
-                "role": "system",
-                "content": "Avoid wrapping the whole response in triple backticks.",
-            },
-            {
-                "role": "system",
-                "content": "If you are asked to explain code then use bullet points",
-            },
-            {
-                "role": "system",
-                "content": "If you are asked to debug code then think carefully and describe what is wrong with the code in question.",
-            },
-            {
-                "role": "system",
-                "content": "If you are asked to generate testcases code then use a unit test library and give a code implemention of unit test cases for the question",
-            },
-            
-            {
-                "role": "system",
-                "content": "Never give an empty response. If you have nothing to say, then say 'I don't know the answer to your question.'",
+                "content": "You are an AI programming assistant like Codex who gives markdown formatted answers",
             },
         ]
         prompt_list.append({"role": "user", "content": prompt})
