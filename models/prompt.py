@@ -41,7 +41,7 @@ class Prompt:
             },
             {
                 "role": "system",
-                "content": "First think step by step and give the code implementation and then describe your plan in great detail after giving the code implementation.",
+                "content": "Think of a step by step approach to the problem and give a code implementation first. Then describe your approach in great detail.",
             },
             {
                 "role": "system",
