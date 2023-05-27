@@ -61,8 +61,8 @@ class Prompt:
             },
             {
                 "role": "system",
-                "content": "If you have nothing to say, then say 'I don't know the answer to your question.'"
-            }
+                "content": "If you have nothing to say, then say 'I don't know the answer to your question.'",
+            },
             {
                 "role": "system",
                 "content": "Use markdown formatting in your answers.",
