@@ -33,12 +33,13 @@ async def get_information(req: Request, model: str):
     if model == "turbo":
         IM_START_TOKEN = "<|im_start|>"
         IM_END_TOKEN = "<|im_end|>"
-        prompt = Prompt(
+        prompt_object = Prompt(
             text=req_body["prompt"],
+            context=req_body["context"],
             im_start_token=IM_START_TOKEN,
             im_end_token=IM_END_TOKEN,
             run_prompt_engine=True,
-        ).get_text()
+        )
         model = AzureChatGPTAPI(
             api_key=os.environ.get("FK_API_KEY", ""),
             endpoint=os.environ.get("FK_ENDPOINT", ""),
@@ -49,7 +50,7 @@ async def get_information(req: Request, model: str):
     elif model == "completions":
 
         model = Completion(api_key=os.environ.get('API_KEY'))
-        prompt = Prompt(
+        prompt_object = Prompt(
             text=req_body["prompt"],
         ).get_text()
 
@@ -59,7 +60,7 @@ async def get_information(req: Request, model: str):
             "code" : "Model not found"
         }
     
-    code_data = model.generate_code(prompt)
+    code_data = model.generate_code(prompt_object)
     response = {
         "status" : "SUCCESS",
         "code" : code_data
