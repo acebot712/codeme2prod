@@ -13,7 +13,6 @@ class Prompt:
         return self.text
     
     def get_context(self):
-
         return self.context
 
     def set_text(self, text):
