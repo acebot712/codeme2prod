@@ -3,8 +3,9 @@ class Prompt:
         self.im_start_token = kwargs.get("IM_START_TOKEN", "<|im_start|>")
         self.im_end_token = kwargs.get("IM_END_TOKEN", "<|im_end|>")
         self.run_prompt_engine = kwargs.get("run_prompt_engine", False)
-        self.text = self.prompt_engine(text) if self.run_prompt_engine else text
         self.context = context
+        # self.text should be at the end
+        self.text = self.prompt_engine(text) if self.run_prompt_engine else text
 
     def __str__(self):
         return self.text
