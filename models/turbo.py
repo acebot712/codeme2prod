@@ -34,10 +34,7 @@ class AzureChatGPTAPI(Model):
             "logit_bias": self.logit_bias,
             "stop": ["<|im_end|>"],
         }
-        print(prompt)
-
         response = requests.post(url, headers=headers, json=data)
-        print(response.json())
         return response.json()["choices"][0]["text"]
 
 

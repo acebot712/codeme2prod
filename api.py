@@ -28,7 +28,7 @@ async def get_information(req: Request, model: str):
     session_cookie = req.headers.get("Cookie")
     if session_cookie:
         session_cookie = session_cookie.split("; ")[0].split("=")[1]
-    print("session_cookie =", session_cookie)
+    # print("session_cookie =", session_cookie)
 
     if model == "turbo":
         IM_START_TOKEN = "<|im_start|>"
@@ -71,18 +71,20 @@ async def get_information(req: Request, model: str):
     data["Response"] = [code_data]
     # df = pd.DataFrame(data)[["prompt","user_id","login_id","Response"]]
     df = pd.DataFrame(data)
-    print(df.columns)
+    # Select all columns except "context"
+    df = df.drop("context", axis=1)
 
-    # current_date = datetime.date.today()
-    # date_string = "~/" + current_date.strftime("%Y-%m-%d") + "_server_logs.csv"
+    current_date = datetime.date.today()
+    date_string = "~/" + current_date.strftime("%Y-%m-%d") + "_server_logs.csv"
 
-    # # Check if output.csv exists, if not create a new file
-    # if not os.path.exists(os.path.expanduser(date_string)):
-    #     df.to_csv(date_string, index=False)
-    # else:
-    #     # Append to existing csv file
-    #     df.to_csv(date_string, mode='a', header=False, index=False)
+    # Check if output.csv exists, if not create a new file
+    if not os.path.exists(os.path.expanduser(date_string)):
+        df.to_csv(date_string, index=False)
+    else:
+        # Append to existing csv file
+        df.to_csv(date_string, mode='a', header=False, index=False)
     return response
     """
     curl -X POST -H "Content-Type: application/json" -d '{"prompt": "Write a function for dfs"}' -b "session_cookie=cookie_monster" http://localhost:8000/getcode/turbo
+    curl -X POST -H "Content-Type: application/json" -d '{"prompt": "Code for DFS function", "context": ""}' -b "session_cookie=cookie_monster" http://35.223.253.138:8000/getcode/turbo
     """
