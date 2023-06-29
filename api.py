@@ -69,7 +69,7 @@ async def get_information(req: Request, model: str):
     # Create a DataFrame from the two lists
     data = req_body
     data["Response"] = [code_data]
-    df = pd.DataFrame(data[["prompt","user_id","login_id","Response"]])
+    df = pd.DataFrame(data)[["prompt","user_id","login_id","Response"]]
 
     current_date = datetime.date.today()
     date_string = "~/" + current_date.strftime("%Y-%m-%d") + "_server_logs.csv"
