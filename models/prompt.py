@@ -11,9 +11,6 @@ class Prompt:
 
     def get_text(self):
         return self.text
-    
-    def get_context(self):
-        return self.context
 
     def set_text(self, text):
         self.text = text
@@ -87,5 +84,5 @@ class Prompt:
             },
         ]
         prompt_list.append({"role": "user", "content": prompt})
-        prompt = "".join(self.prompt_list_to_chatml_list(prompt_list)) + "\nassistant: AI: "
+        prompt = self.context + "".join(self.prompt_list_to_chatml_list(prompt_list)) + "\nassistant: AI: "
         return prompt

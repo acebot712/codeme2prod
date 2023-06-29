@@ -20,9 +20,8 @@ class AzureChatGPTAPI(Model):
         self.im_end_token = kwargs.get("im_end_token", "<|im_end|>")
         self.stop = kwargs.get("stop", [f"{self.im_end_token}", "```"])
 
-    def generate_code(self, prompt_object, context=""):
+    def generate_code(self, prompt_object):
         prompt = prompt_object.get_text()
-        context = prompt_object.get_context()
         url = self.endpoint
         headers = {"Content-Type": "application/json", "api-key": self.api_key}
         data = {
