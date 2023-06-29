@@ -37,7 +37,7 @@ class AzureChatGPTAPI(Model):
         print(prompt)
 
         response = requests.post(url, headers=headers, json=data)
-        print(response)
+        print(response.json())
         return response.json()["choices"][0]["text"]
 
 
