@@ -28,17 +28,18 @@ async def get_information(req: Request, model: str):
     session_cookie = req.headers.get("Cookie")
     if session_cookie:
         session_cookie = session_cookie.split("; ")[0].split("=")[1]
-    print("session_cookie =", session_cookie)
+    # print("session_cookie =", session_cookie)
 
     if model == "turbo":
         IM_START_TOKEN = "<|im_start|>"
         IM_END_TOKEN = "<|im_end|>"
-        prompt = Prompt(
+        prompt_object = Prompt(
             text=req_body["prompt"],
+            context=req_body["context"],
             im_start_token=IM_START_TOKEN,
             im_end_token=IM_END_TOKEN,
             run_prompt_engine=True,
-        ).get_text()
+        )
         model = AzureChatGPTAPI(
             api_key=os.environ.get("FK_API_KEY", ""),
             endpoint=os.environ.get("FK_ENDPOINT", ""),
@@ -49,7 +50,7 @@ async def get_information(req: Request, model: str):
     elif model == "completions":
 
         model = Completion(api_key=os.environ.get('API_KEY'))
-        prompt = Prompt(
+        prompt_object = Prompt(
             text=req_body["prompt"],
         ).get_text()
 
@@ -59,7 +60,7 @@ async def get_information(req: Request, model: str):
             "code" : "Model not found"
         }
     
-    code_data = model.generate_code(prompt)
+    code_data = model.generate_code(prompt_object)
     response = {
         "status" : "SUCCESS",
         "code" : code_data
@@ -68,7 +69,10 @@ async def get_information(req: Request, model: str):
     # Create a DataFrame from the two lists
     data = req_body
     data["Response"] = [code_data]
+    # df = pd.DataFrame(data)[["prompt","user_id","login_id","Response"]]
     df = pd.DataFrame(data)
+    # Select all columns except "context"
+    df = df.drop("context", axis=1)
 
     current_date = datetime.date.today()
     date_string = "~/" + current_date.strftime("%Y-%m-%d") + "_server_logs.csv"
@@ -82,4 +86,5 @@ async def get_information(req: Request, model: str):
     return response
     """
     curl -X POST -H "Content-Type: application/json" -d '{"prompt": "Write a function for dfs"}' -b "session_cookie=cookie_monster" http://localhost:8000/getcode/turbo
+    curl -X POST -H "Content-Type: application/json" -d '{"prompt": "Code for DFS function", "context": ""}' -b "session_cookie=cookie_monster" http://35.223.253.138:8000/getcode/turbo
     """
