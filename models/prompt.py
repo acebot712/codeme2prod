@@ -81,7 +81,7 @@ class Prompt:
         prompt_list = [
             {
                 "role": "system",
-                "content": "You are an AI programming assistant like Codex who gives markdown formatted answers",
+                "content": "Your name is 'CodeMe' and you are an AI programming assistant like Codex who gives markdown formatted answers",
             },
         ]
         prompt_list.append({"role": "user", "content": prompt})
