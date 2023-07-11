@@ -10,7 +10,7 @@ class Completion(Model):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         openai.api_key = self.api_key
-        self.model_name = kwargs.get("model_name", "gpt-3.5-turbo")
+        self.model_name = kwargs.get("model_name", "gpt-3.5-turbo-0613")
         self.messages = kwargs.get("messages", [
             {
                 "role": "system",
