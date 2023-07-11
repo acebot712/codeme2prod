@@ -52,7 +52,8 @@ async def get_information(req: Request, model: str):
         model = Completion(api_key=os.environ.get('API_KEY'))
         prompt_object = Prompt(
             text=req_body["prompt"],
-        ).get_text()
+            context=req_body["context"]
+        )
 
     else:
         return {
