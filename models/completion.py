@@ -24,11 +24,14 @@ class Completion(Model):
         self.logit_bias = kwargs.get("logit_bias", {1640: 10, 361: 10, 7783: 5})
 
     def generate_code(self, prompt_object):
+        print("REACHED GENERATE CODE")
         prompt = prompt_object.get_text()
         chatml_string = prompt_object.get_context()
+        print("I do work here")
         context = prompt_object.chatml_to_prompt_list(chatml_string)
         self.messages.extend(context)
         self.messages.append({"role": "user", "content": prompt})
+        print(self.messages)
         response = openai.ChatCompletion.create(
             model=self.model_name,
             messages=self.messages,
@@ -44,6 +47,6 @@ if __name__ == "__main__":
     model = Completion(api_key=os.environ.get('API_KEY'))
     prompt = Prompt(
         text="write code for implementing a dfs function",
-    ).get_text()
+    )
     print(model.generate_code(prompt))
 

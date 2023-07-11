@@ -54,6 +54,8 @@ async def get_information(req: Request, model: str):
             text=req_body["prompt"],
             context=req_body["context"]
         )
+        print("prompt_object =", prompt_object)
+        print("prompt_object.get_text() =", prompt_object.get_text())
 
     else:
         return {
@@ -84,7 +86,7 @@ async def get_information(req: Request, model: str):
     # else:
     #     # Append to existing csv file
     #     df.to_csv(date_string, mode='a', header=False, index=False)
-    
+
     return response
     """
     curl -X POST -H "Content-Type: application/json" -d '{"prompt": "Write a function for dfs"}' -b "session_cookie=cookie_monster" http://localhost:8000/getcode/turbo
