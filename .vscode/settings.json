@@ -1,4 +1,6 @@
 {
     "liveServer.settings.port": 5501,
-    "python.formatting.provider": "black"
+    "python.formatting.provider": "black",
+    "editor.tabCompletion": "on",
+    "diffEditor.codeLens": true
 }
