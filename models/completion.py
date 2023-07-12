@@ -1,5 +1,5 @@
-from .model import Model
-from .prompt import Prompt
+from model import Model
+from prompt import Prompt
 import openai
 import os
 from dotenv import load_dotenv
@@ -41,6 +41,8 @@ class Completion(Model):
             presence_penalty=self.presence_penalty,
             logit_bias=self.logit_bias,
         )
+        print(response)
+        print(type(response))
         return response["choices"][0]["message"]["content"]
     
 if __name__ == "__main__":
