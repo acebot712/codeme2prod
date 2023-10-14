@@ -3,6 +3,13 @@
 import re
 import requests
 from bs4 import BeautifulSoup
+import os
+
+if os.name == 'posix':  # POSIX is the standard operating system interface usually associated with Unix, Linux.
+    __import__('pysqlite3')
+    import sys
+    sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+    
 import chromadb
 
 def extract_links_from_prompt(prompt: str) -> list:
