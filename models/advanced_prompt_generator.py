@@ -97,13 +97,14 @@ def generate_advanced_prompt(prompt_text: str) -> str:
         all_retrievals.append(retrievals['documents'][0])
         chroma_client.delete_collection(name=collection_name)
 
-    advanced_prompt = ""
+    advanced_prompt = prompt_text
     for idx, retrieval in enumerate(all_retrievals):
         retrieval_text = '\n'.join(retrieval)
-        advanced_prompt += f"{prompt_text}\nRelevant extracted content from the links mentioned above for extra context:\nLink {idx + 1}: {extracted_links[idx]}\n{retrieval_text}\n------\n"
+        advanced_prompt = f"{prompt_text}\nRelevant extracted content from the links mentioned above for extra context:\nLink {idx + 1}: {extracted_links[idx]}\n{retrieval_text}\n------\n"
 
     return advanced_prompt
 
 if __name__ == '__main__':
     prompt = "Founded in? Look at https://en.wikipedia.org/wiki/Riot_Games"
     print(generate_advanced_prompt(prompt))
+    
