@@ -1,4 +1,4 @@
-from models.advanced_prompt_generator import generate_advanced_prompt
+from .advanced_prompt_generator import generate_advanced_prompt
 class Prompt:
     def __init__(self, text, context="", **kwargs):
         """
