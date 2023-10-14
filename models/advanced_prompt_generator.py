@@ -92,7 +92,7 @@ def generate_advanced_prompt(prompt_text: str) -> str:
     all_retrievals = []
 
     for link in extracted_links:
-        collection_name = re.sub(r"[^a-zA-Z0-9]", "_", link)
+        collection_name = "my_collection"
         collection = chroma_client.create_collection(name=collection_name)
 
         main_text = fetch_main_text_content(link)
