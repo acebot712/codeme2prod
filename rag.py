@@ -42,40 +42,35 @@ def add_documents_to_collection(collection, documents, start_id=0):
     collection.add(documents=documents, ids=ids)
     return len(documents)  # Return the number of documents added
 
-if __name__ == '__main__':
-    prompt_text = """
-    It was founded in September 2006 by Brandon Beck and Marc Merrill to develop League of Legends and went on to develop several spin-off https://en.wikipedia.org/wiki/Riot_Games
-    """
+def generate_advanced_prompt(prompt_text: str) -> str:
     extracted_links = extract_links_from_prompt(prompt_text)
     
     chroma_client = chromadb.Client()
-    
-    all_retrievals = []  # The 2D list to store retrievals
+    all_retrievals = []
 
     for link in extracted_links:
-        # Use the link as the name of the collection (but clean it up for naming conventions)
         collection_name = re.sub(r"[^a-zA-Z0-9]", "_", link)
         collection = chroma_client.create_collection(name=collection_name)
 
         main_text = fetch_main_text_content(link)
         paragraphs = [p.strip() for p in main_text.split('\n\n') if p.strip()]
-        print(add_documents_to_collection(collection, paragraphs))
+        add_documents_to_collection(collection, paragraphs)
 
-        # Retrieval
         query_text = remove_links_from_text(prompt_text)
         retrievals = retrieve_documents_from_query(collection, query_text=query_text, n_results=1)
-        
-        # Add retrieval to the 2D list
         all_retrievals.append(retrievals['documents'][0])
-
-        # Clean up: destroy the collection after we're done
         chroma_client.delete_collection(name=collection_name)
 
     advanced_prompt = ""
-    # Print all retrievals
     for idx, retrieval in enumerate(all_retrievals):
         retrieval_text = '\n'.join(retrieval)
         advanced_prompt += f"{prompt_text}\nRelevant extracted content from the links mentioned above for extra context:\nLink {idx + 1}: {extracted_links[idx]}\n{retrieval_text}\n------\n"
 
+    return advanced_prompt
 
-    print(advanced_prompt)
+if __name__ == '__main__':
+    prompt = """
+    It was founded in September 2006 by Brandon Beck and Marc Merrill to develop League of Legends and went on to develop several spin-off https://en.wikipedia.org/wiki/Riot_Games
+    """
+    print(generate_advanced_prompt(prompt))
+    
