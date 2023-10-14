@@ -1,5 +1,5 @@
-from model import Model
-from prompt import Prompt
+from .model import Model
+from .prompt import Prompt
 import openai
 import os
 from dotenv import load_dotenv
