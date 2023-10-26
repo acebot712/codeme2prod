@@ -43,7 +43,7 @@ class Completion(Model):
         return response["choices"][0]["message"]["content"]
     
 if __name__ == "__main__":
-    model = Completion(api_key=os.environ.get('API_KEY'))
+    model = Completion(api_key=os.environ.get('OPENAI_API_KEY'))
     prompt = Prompt(
         text="write code for implementing a dfs function",
     )

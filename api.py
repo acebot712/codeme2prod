@@ -49,7 +49,7 @@ async def get_information(req: Request, model: str):
         
     elif model == "completions":
 
-        model = Completion(api_key=os.environ.get('API_KEY'))
+        model = Completion(api_key=os.environ.get('OPENAI_API_KEY'))
         prompt_object = Prompt(
             text=req_body["prompt"],
             context=req_body["context"]

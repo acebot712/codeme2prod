@@ -1,4 +1,5 @@
-from .advanced_prompt_generator import generate_advanced_prompt
+# from .advanced_prompt_generator import generate_advanced_prompt
+from .knowledge_retriever import KnowledgeRetriever
 class Prompt:
     def __init__(self, text, context="", **kwargs):
         """
@@ -12,7 +13,13 @@ class Prompt:
         self.im_end_token = kwargs.get("IM_END_TOKEN", "<end>")
         self.run_prompt_engine = kwargs.get("run_prompt_engine", False)
         self.context = context
-        text = generate_advanced_prompt(text)
+        # Old way of internet usage
+        # text = generate_advanced_prompt(text)
+
+        # New way of internet usage
+        retriever = KnowledgeRetriever()
+        text = retriever.enhance_prompt_with_context(text)
+
         self.text = self.prompt_engine(text) if self.run_prompt_engine else text
 
     def __str__(self):
