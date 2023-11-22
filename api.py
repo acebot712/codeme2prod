@@ -29,6 +29,7 @@ app.add_middleware(
 @app.post("/generateSession/")
 async def generate_session():
   session_id = uuid.uuid4() # Generate a random UUID
+  print(f"{session_id=}")
   return JSONResponse(status_code=200, content={"session_id": str(session_id)})
 
 @app.post("/getcode/{model}")
@@ -100,9 +101,12 @@ async def get_information_agent(client_id: str, prompt_model: PromptModel):
     print(generator)
 
     try:
-        output = generator.generate_code(prompt=prompt_model.prompt)
-        print(output)
-        return JSONResponse(status_code=200, content=output)
+        code_data = generator.generate_code(prompt=prompt_model.prompt)
+        response = {
+            "status" : "SUCCESS",
+            "code" : code_data
+        }
+        return JSONResponse(status_code=200, content=code_data)
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "FAILURE", "error": str(e)})
     # Create a DataFrame from the two lists
