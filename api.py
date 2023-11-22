@@ -85,7 +85,7 @@ class PromptModel(BaseModel):
     login_id: str
     
 @app.post("/getagentcode/{client_id}")
-async def get_information(client_id: str, prompt: PromptModel):
+async def get_information_agent(client_id: str, prompt: PromptModel):
     if client_id not in clients:
         clients[client_id] = CodeGenerator()
     generator = clients[client_id]
