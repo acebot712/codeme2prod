@@ -106,7 +106,7 @@ async def get_information_agent(client_id: str, prompt_model: PromptModel):
             "status" : "SUCCESS",
             "code" : code_data
         }
-        return JSONResponse(status_code=200, content=code_data)
+        return JSONResponse(status_code=200, content=response)
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "FAILURE", "error": str(e)})
     # Create a DataFrame from the two lists
