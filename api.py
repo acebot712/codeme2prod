@@ -29,7 +29,6 @@ app.add_middleware(
 @app.post("/generateSession/")
 async def generate_session():
   session_id = uuid.uuid4() # Generate a random UUID
-  print(f"{session_id=}")
   return JSONResponse(status_code=200, content={"session_id": str(session_id)})
 
 @app.post("/getcode/{model}")
@@ -39,7 +38,6 @@ async def get_information(req: Request, model: str):
         session_cookie = req.headers.get("Cookie")
         if session_cookie:
             session_cookie = session_cookie.split("; ")[0].split("=")[1]
-        # print("session_cookie =", session_cookie)
 
         if model == "turbo":
             IM_START_TOKEN = "<|im_start|>"
@@ -98,8 +96,6 @@ async def get_information_agent(client_id: str, prompt_model: PromptModel):
     if client_id not in clients:
         clients[client_id] = CodeGenerator()
     generator = clients[client_id]
-    print(generator)
-
     try:
         code_data = generator.generate_code(prompt=prompt_model.prompt)
         response = {

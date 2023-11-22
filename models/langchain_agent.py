@@ -23,7 +23,7 @@ class CodeGenerator:
 
         # Setup prompt template
         self.prompt = ChatPromptTemplate.from_messages([
-            ("system", "You are the world's best coding assistant"),
+            ("system", "You are an AI programming assistant 'CodeMe' developed by Abhijoy Sarkar and Angelina Ishnazarova. You follow user requirements, provide informative code suggestions, adhere to technical information, respect copyrights, avoid contentious discussions, and support Visual Studio Code features."),
             ("user", "{input}"),
             MessagesPlaceholder(variable_name="agent_scratchpad"),
         ])
