@@ -3,10 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from models.completion import Completion
 from models.turbo import AzureChatGPTAPI
 from models.prompt import Prompt
+from models.langchain_agent import CodeGenerator
 import os
 from dotenv import load_dotenv
-# import pandas as pd
-import datetime
+from typing import Dict
+from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 
 
@@ -59,7 +60,7 @@ async def get_information(req: Request, model: str):
             )
             print("prompt_object =", prompt_object)
             print("prompt_object.get_text() =", prompt_object.get_text())
-
+            
         else:
             raise HTTPException(status_code=404, detail="Model not found")
         
@@ -70,6 +71,28 @@ async def get_information(req: Request, model: str):
         }
         return JSONResponse(status_code=200, content=response)
     
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "FAILURE", "error": str(e)})
+    
+# New Agent Code
+
+# dict to store different instances of CodeGenerator per client  
+clients: Dict[str, CodeGenerator] = {}
+class PromptModel(BaseModel):
+    prompt: str
+    context: str
+    user_id: str
+    login_id: str
+    
+@app.post("/getagentcode/{client_id}")
+async def get_information(client_id: str, prompt: PromptModel):
+    if client_id not in clients:
+        clients[client_id] = CodeGenerator()
+    generator = clients[client_id]
+
+    try:
+        output = generator.generate_code(prompt=prompt.content)
+        return JSONResponse(status_code=200, content=output)
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "FAILURE", "error": str(e)})
 
