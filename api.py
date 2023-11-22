@@ -3,11 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from models.completion import Completion
 from models.turbo import AzureChatGPTAPI
 from models.prompt import Prompt
+from models.langchain_agent import CodeGenerator
 import os
 from dotenv import load_dotenv
-# import pandas as pd
-import datetime
+from typing import Dict
+from pydantic import BaseModel
 from fastapi.responses import JSONResponse
+import uuid
 
 
 load_dotenv()
@@ -24,6 +26,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.post("/generateSession/")
+async def generate_session():
+  session_id = uuid.uuid4() # Generate a random UUID
+  return JSONResponse(status_code=200, content={"session_id": str(session_id)})
+
 @app.post("/getcode/{model}")
 async def get_information(req: Request, model: str):
     try:
@@ -31,7 +38,6 @@ async def get_information(req: Request, model: str):
         session_cookie = req.headers.get("Cookie")
         if session_cookie:
             session_cookie = session_cookie.split("; ")[0].split("=")[1]
-        # print("session_cookie =", session_cookie)
 
         if model == "turbo":
             IM_START_TOKEN = "<|im_start|>"
@@ -59,7 +65,7 @@ async def get_information(req: Request, model: str):
             )
             print("prompt_object =", prompt_object)
             print("prompt_object.get_text() =", prompt_object.get_text())
-
+            
         else:
             raise HTTPException(status_code=404, detail="Model not found")
         
@@ -72,7 +78,33 @@ async def get_information(req: Request, model: str):
     
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "FAILURE", "error": str(e)})
+    
+# New Agent Code
 
+# dict to store different instances of CodeGenerator per client  
+clients: Dict[str, CodeGenerator] = {}
+class PromptModel(BaseModel):
+    prompt: str
+    context: str
+    user_id: str
+    login_id: str
+    
+@app.post("/getagentcode/{client_id}")
+async def get_information_agent(client_id: str, prompt_model: PromptModel):
+    print(client_id)
+    print(prompt_model)
+    if client_id not in clients:
+        clients[client_id] = CodeGenerator()
+    generator = clients[client_id]
+    try:
+        code_data = generator.generate_code(prompt=prompt_model.prompt)
+        response = {
+            "status" : "SUCCESS",
+            "code" : code_data
+        }
+        return JSONResponse(status_code=200, content=response)
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "FAILURE", "error": str(e)})
     # Create a DataFrame from the two lists
     # data = req_body
     # data["Response"] = [code_data]
