@@ -29,7 +29,6 @@ class Completion(Model):
         context = prompt_object.chatml_to_prompt_list(chatml_string)
         self.messages.extend(context)
         self.messages.append({"role": "user", "content": prompt})
-        print(self.messages)
         response = openai.ChatCompletion.create(
             model=self.model_name,
             messages=self.messages,
@@ -39,6 +38,8 @@ class Completion(Model):
             presence_penalty=self.presence_penalty,
             logit_bias=self.logit_bias,
         )
+
+        print(response["choices"])
 
         return response["choices"][0]["message"]["content"]
     
