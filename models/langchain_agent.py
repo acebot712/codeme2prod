@@ -1,5 +1,5 @@
 import os
-from langchain.tools import load_tools
+from langchain.agents import load_tools
 from langchain.memory import ConversationBufferMemory
 from langchain.chat_models import AzureChatOpenAI
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
