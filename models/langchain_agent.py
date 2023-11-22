@@ -14,7 +14,7 @@ class CodeGenerator:
         # Initialize memory and LLM
         self.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
         self.llm = AzureChatOpenAI(
-            azure_endpoint=os.environ.get("AZURE_ENDPOINT"),
+            openai_api_base=os.environ.get("OPENAI_API_BASE"),
             deployment_name=os.environ.get("DEPLOYMENT_NAME"),
             openai_api_version=os.environ.get("OPENAI_API_VERSION"),
             openai_api_key=os.environ.get("AZURE_OPENAI_API_KEY"),
