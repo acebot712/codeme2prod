@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from typing import Dict
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
+import uuid
 
 
 load_dotenv()
@@ -24,6 +25,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.post("/generateSession/")
+async def generate_session():
+  session_id = uuid.uuid4() # Generate a random UUID
+  return JSONResponse(status_code=200, content={"session_id": str(session_id)})
 
 @app.post("/getcode/{model}")
 async def get_information(req: Request, model: str):
@@ -98,7 +104,6 @@ async def get_information_agent(client_id: str, prompt_model: PromptModel):
         return JSONResponse(status_code=200, content=output)
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "FAILURE", "error": str(e)})
-
     # Create a DataFrame from the two lists
     # data = req_body
     # data["Response"] = [code_data]
