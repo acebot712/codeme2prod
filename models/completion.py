@@ -39,6 +39,7 @@ class Completion(Model):
             logit_bias=self.logit_bias,
         )
 
+        print(response)
         print(response["choices"])
 
         return response["choices"][0]["message"]["content"]
