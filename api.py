@@ -101,6 +101,7 @@ async def get_information_agent(client_id: str, prompt_model: PromptModel):
 
     try:
         output = generator.generate_code(prompt=prompt_model.prompt)
+        print(output)
         return JSONResponse(status_code=200, content=output)
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "FAILURE", "error": str(e)})
