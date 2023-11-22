@@ -64,10 +64,12 @@ async def get_information(req: Request, model: str):
         }
     
     code_data = model.generate_code(prompt_object)
+    print(code_data)
     response = {
         "status" : "SUCCESS",
         "code" : code_data
     }
+    print(response)
 
     # Create a DataFrame from the two lists
     # data = req_body
