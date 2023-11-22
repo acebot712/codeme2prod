@@ -1,5 +1,5 @@
 # from .advanced_prompt_generator import generate_advanced_prompt
-from .knowledge_retriever import KnowledgeRetriever
+# from .knowledge_retriever import KnowledgeRetriever
 class Prompt:
     def __init__(self, text, context="", **kwargs):
         """
