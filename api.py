@@ -85,13 +85,16 @@ class PromptModel(BaseModel):
     login_id: str
     
 @app.post("/getagentcode/{client_id}")
-async def get_information_agent(client_id: str, prompt: PromptModel):
+async def get_information_agent(client_id: str, prompt_model: PromptModel):
+    print(client_id)
+    print(prompt_model)
     if client_id not in clients:
         clients[client_id] = CodeGenerator()
     generator = clients[client_id]
+    print(generator)
 
     try:
-        output = generator.generate_code(prompt=prompt.content)
+        output = generator.generate_code(prompt=prompt_model.prompt)
         return JSONResponse(status_code=200, content=output)
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "FAILURE", "error": str(e)})
