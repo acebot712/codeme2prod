@@ -6,7 +6,7 @@ from models.prompt import Prompt
 from models.langchain_agent import CodeGenerator
 import os
 from dotenv import load_dotenv
-from typing import Dict
+from typing import Dict, Optional
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 import uuid
@@ -88,23 +88,43 @@ class PromptModel(BaseModel):
     context: str
     user_id: str
     login_id: str
+    onPremise: bool
+    deepScan: bool
+    deepScanText: Optional[str] = None
     
 @app.post("/getagentcode/{client_id}")
 async def get_information_agent(client_id: str, prompt_model: PromptModel):
-    print(client_id)
-    print(prompt_model)
+    print(f"{client_id=}")
+    print(f"{prompt_model.prompt=}")
+    print(f"{prompt_model.deepScan=}")
+
+    # Check if the client is already in the clients dictionary
     if client_id not in clients:
         clients[client_id] = CodeGenerator()
+
     generator = clients[client_id]
+
     try:
-        code_data = generator.generate_code(prompt=prompt_model.prompt)
+        additional_params = {}
+        if prompt_model.deepScan and prompt_model.deepScanText:
+            additional_params['deep_scan_text'] = prompt_model.deepScanText
+
+        code_data = generator.generate_code(
+            prompt=prompt_model.prompt,
+            on_premise=prompt_model.onPremise,
+            deep_scan=prompt_model.deepScan,
+            **additional_params  # Pass additional parameters if they exist
+        )
+
         response = {
-            "status" : "SUCCESS",
-            "code" : code_data
+            "status": "SUCCESS",
+            "code": code_data
         }
         return JSONResponse(status_code=200, content=response)
+
     except Exception as e:
         return JSONResponse(status_code=500, content={"status": "FAILURE", "error": str(e)})
+    
     # Create a DataFrame from the two lists
     # data = req_body
     # data["Response"] = [code_data]
