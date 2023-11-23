@@ -2,9 +2,7 @@ import os
 from langchain.agents import load_tools
 from langchain.memory import ConversationBufferMemory
 from langchain.chat_models import AzureChatOpenAI
-from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain.agents import Tool, AgentType, initialize_agent
-from langchain.schema import HumanMessage, SystemMessage
+from langchain.agents import AgentType, initialize_agent
 
 class CodeGenerator:
     def __init__(self):
@@ -33,7 +31,11 @@ class CodeGenerator:
 
         self.agent_chain.agent.llm_chain.prompt.messages[0].prompt.template = os.environ.get("SYSTEM_PROMPT")
 
-    def generate_code(self, prompt):
+    def generate_code(self, prompt, on_premise=False, deep_scan=False, **additional_params):
+        if deep_scan:
+            print("Scanning Deep")
+            prompt = additional_params['deep_scan_text'] + "\nFeel free to use my codebase above as context if necessary\n" + prompt
+            
         # Invoke the agent chain with the provided prompt
         return self.agent_chain.invoke({"input": prompt})["output"]
 
