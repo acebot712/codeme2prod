@@ -4,6 +4,7 @@ from langchain.memory import ConversationBufferMemory
 from langchain.chat_models import AzureChatOpenAI
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.agents import Tool, AgentType, initialize_agent
+from langchain.schema import HumanMessage, SystemMessage
 
 class CodeGenerator:
     def __init__(self):
@@ -21,22 +22,16 @@ class CodeGenerator:
             model_name=os.environ.get("MODEL_NAME")
         )
 
-        # Setup prompt template
-        self.prompt = ChatPromptTemplate.from_messages([
-            ("system", "You are an AI programming assistant 'CodeMe' developed by Abhijoy Sarkar and Angelina Ishnazarova. You follow user requirements, provide informative code suggestions, adhere to technical information, respect copyrights, avoid contentious discussions, and support Visual Studio Code features."),
-            ("user", "{input}"),
-            MessagesPlaceholder(variable_name="agent_scratchpad"),
-        ])
-
         # Initialize agent chain
         self.agent_chain = initialize_agent(
             self.tools,
             self.llm,
             agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
             memory=self.memory,
-            prompt=self.prompt,
             max_iterations=5
         )
+
+        self.agent_chain.agent.llm_chain.prompt.messages[0].prompt.template = os.environ.get("SYSTEM_PROMPT")
 
     def generate_code(self, prompt):
         # Invoke the agent chain with the provided prompt
