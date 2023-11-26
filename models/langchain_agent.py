@@ -26,6 +26,7 @@ class CodeGenerator:
             self.llm,
             agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,
             memory=self.memory,
+            verbose=True,
             max_iterations=5
         )
 
@@ -35,6 +36,7 @@ class CodeGenerator:
         if deep_scan:
             print("Scanning Deep")
             prompt = additional_params['deep_scan_text'] + "\nFeel free to use my codebase above as context if necessary\n" + prompt
+            print(prompt)
             
         # Invoke the agent chain with the provided prompt
         return self.agent_chain.invoke({"input": prompt})["output"]
