@@ -1,3 +1,8 @@
+import os
+import promptguard
+
+promptguard.init(api_key=os.environ["PROMPTGUARD_API_KEY"])
+
 from .model import Model
 from .prompt import Prompt
 import openai
